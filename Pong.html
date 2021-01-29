@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pong</title>
+	
+	<link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'>
+	
+	<style>
+		body{
+			margin: 0px;
+			overflow: hidden;
+			font-family: 'Press Start 2P';
+			font-size: 22px;
+		}
+		
+	</style>
+
+</head>
+<body onLoad = "load()">
+
+	<canvas id = "canvas"> </canvas>
+
+	<script>
+		
+		const canvas = document.getElementById("canvas");
+		const ctx = canvas.getContext("2d");
+		window.addEventListener("keydown", keydown)
+		window.addEventListener("keyup", keyup)
+		
+		function load()
+		{
+			winSound = document.createElement("AUDIO");
+			winSound.src = "Sounds/win.wav"
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			document.fonts.load('30px "Press Start 2P"').then(update);
+			requestAnimationFrame(update);
+			
+			gameState = "serve";
+			server = "p1"
+			
+			p1 = new Paddle("p1");
+			p2 = new Paddle("p2");
+			ball = new Ball();
+		}
+		
+		function update()
+		{	
+			ctx.font = "70px monospace";
+			ctx.fillStyle = "#111111";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+				
+			if(p1.score == 5)
+			{
+				ball.stop;
+				gameState = "end";
+				ctx.fillStyle = "white";
+				ctx.fillText("Player 1 Wins!", canvas.width / 2 - 245, canvas.height/4);
+				ctx.font = "35px monospace";
+				ctx.fillText("Press enter to play again", canvas.width / 2 - 218.75, canvas.height/4 + 70);
+				winSound.play();
+			}
+			
+			else if(p2.score == 5)
+			{
+				ball.stop;
+				gameState = "end";
+				ctx.fillStyle = "white";
+				ctx.fillText("Player 2 Wins!", canvas.width / 2 - 245, canvas.height/4);
+				ctx.font = "35px monospace";
+				ctx.fillText("Press enter to play again", canvas.width / 2 - 218.75, canvas.height/4 + 70);
+				winSound.play();
+			}
+			
+			else
+			{
+				ctx.fillStyle = "white";
+				ctx.fillRect(canvas.width/2 - 5, 0, 10, canvas.height);
+				
+				ball.update();
+				p1.update();
+				p2.update();
+				requestAnimationFrame(update);
+				
+			}
+	
+		}
+		
+		
+		function keydown(evt)
+		{
+			switch(evt.keyCode)
+			{
+			
+				case 38:
+					p2.isMovingUp = true;
+					break;
+				
+				case 40:
+					p2.isMovingDown = true;
+					break;
+					
+				case 87:
+					p1.isMovingUp = true;
+					break;
+				
+				case 83:
+					p1.isMovingDown = true;
+					break;
+				
+				case 32:
+					if(gameState == "serve")
+					{
+						gameState = "game";
+						ball.start();
+						ball.audio.play();
+					}
+					break;
+					
+				case 13:
+					location.reload();
+					break;		
+			}
+		}
+		
+		function keyup(evt)
+		{
+			switch(evt.keyCode)
+			{
+				case 38:
+					p2.isMovingUp = false;
+					break;
+				
+				case 40:
+					p2.isMovingDown = false;
+					break;
+					
+				case 87:
+					p1.isMovingUp = false;
+					break;
+				
+				case 83:
+					p1.isMovingDown = false;
+					break;
+			}
+		}
+
+	</script>
+
+	<script src = "Paddle.js"></script>
+	<script src = "Ball.js"></script>
+		
+</body>
+</html>
